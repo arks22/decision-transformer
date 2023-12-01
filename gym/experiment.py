@@ -2,6 +2,7 @@ import gym
 import numpy as np
 import torch
 import wandb
+from tqdm import tqdm
 
 import argparse
 import pickle
@@ -23,10 +24,7 @@ def discount_cumsum(x, gamma):
     return discount_cumsum
 
 
-def experiment(
-        exp_prefix,
-        variant,
-):
+def experiment(exp_prefix,variant,):
     device = variant.get('device', 'cuda')
     log_to_wandb = variant.get('log_to_wandb', False)
 
@@ -274,7 +272,7 @@ def experiment(
         )
         # wandb.watch(model)  # wandb has some bug
 
-    for iter in range(variant['max_iters']):
+    for iter in tqdm(range(variant['max_iters'])):
         outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
         if log_to_wandb:
             wandb.log(outputs)

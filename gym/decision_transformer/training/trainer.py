@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import tqdm
 
 import time
 
@@ -26,7 +27,7 @@ class Trainer:
         train_start = time.time()
 
         self.model.train()
-        for _ in range(num_steps):
+        for _ in tqdm(range(num_steps), desc='Training', leave=False):
             train_loss = self.train_step()
             train_losses.append(train_loss)
             if self.scheduler is not None:
@@ -37,7 +38,7 @@ class Trainer:
         eval_start = time.time()
 
         self.model.eval()
-        for eval_fn in self.eval_fns:
+        for eval_fn in tqdm(self.eval_fns, desc='Evaluation', leave=False):
             outputs = eval_fn(self.model)
             for k, v in outputs.items():
                 logs[f'evaluation/{k}'] = v
